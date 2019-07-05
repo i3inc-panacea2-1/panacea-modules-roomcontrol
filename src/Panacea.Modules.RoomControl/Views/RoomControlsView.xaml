@@ -1,0 +1,293 @@
+﻿<UserControl
+    x:Class="Panacea.Modules.RoomControl.Views.RoomControlsView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behaviors="clr-namespace:Panacea.Controls.Behaviors;assembly=Panacea.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:local="clr-namespace:Panacea.Modules.RoomControl.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:multilinguality="clr-namespace:Panacea.Multilinguality;assembly=Panacea.Multilinguality"
+    xmlns:my="clr-namespace:Panacea.Modules.RoomControl.Controls"
+    xmlns:viewModel="clr-namespace:Panacea.Modules.RoomControl.ViewModels"
+    Name="RoomControlControl"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    Background="#FFE8E8E9"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <Style x:Key="BoxButton" TargetType="Button">
+            <Style.Setters>
+                <Setter Property="Margin" Value="5" />
+                <Setter Property="HorizontalAlignment" Value="Center" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Grid>
+                                <Rectangle Name="Rect" Fill="#e1e1e1" />
+                                <TextBlock
+                                    Margin="15,10"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    FontSize="{DynamicResource FontSize-Small}"
+                                    Foreground="Black"
+                                    Opacity="0.7"
+                                    Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Content}" />
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="Rect" Property="Fill" Value="Orange" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style.Setters>
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Name="LightsColumn" Width="{Binding LightsColumnWidth}" />
+                <ColumnDefinition Name="TemperatureColumn" Width="{Binding TemperatureColumnWidth}" />
+            </Grid.ColumnDefinitions>
+
+            <my:RoomControlBox
+                Title="{multilinguality:Translate 'Lights',
+                                                  'RoomControl'}"
+                ImageUrl="pack://application:,,,/Panacea.Modules.RoomControl;component/Images/lights.png"
+                TitleBackground="#4170c5">
+                <my:RoomControlBox.BodyContent>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <TextBlock
+                            FontSize="{DynamicResource FontSize-Small}"
+                            Foreground="#999999"
+                            Text="{multilinguality:Translate 'Switch the button to turn on/off all the lights.',
+                                                             'RoomControl'}"
+                            TextWrapping="Wrap" />
+                        <ScrollViewer
+                            Grid.Row="1"
+                            HorizontalAlignment="Center"
+                            HorizontalScrollBarVisibility="Auto"
+                            PanningMode="HorizontalOnly"
+                            VerticalScrollBarVisibility="Disabled">
+                            <ItemsControl HorizontalAlignment="Left" ItemsSource="{Binding LightingDevices}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <my:OnOffButtonsControl
+                                            MaxValue="{Binding Group.ItemReferences[0].ValueRange.Max}"
+                                            MinValue="{Binding Group.ItemReferences[0].ValueRange.Min}"
+                                            Tag="{Binding}"
+                                            Text="{Binding Group.Name}"
+                                            ValueChangedCommand="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:RoomControlsView}}, Path=DataContext.StringValueChangedCommand}"
+                                            Value="{Binding Value}" />
+                                        <!--<my:SliderControl
+                                            Margin="0,0,25,0"
+                                            Category="{Binding Group.Type}"
+                                            DeviceType="{Binding Group.ItemReferences[0].RefType}"
+                                            Label="{Binding Label}"
+                                            Maximum="{Binding Group.ItemReferences[0].ValueRange.Max}"
+                                            MeasurementUnit="{Binding Group.ItemReferences[0].MeasurementUnit}"
+                                            Minimum="{Binding Group.ItemReferences[0].ValueRange.Min}"
+                                            SliderBackground="#4170c5"
+                                            StringValueChangedCommand="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:RoomControlsView}}, Path=DataContext.StringValueChangedCommand}"
+                                            Tag="{Binding}"
+                                            Text="{Binding Group.Name}"
+                                            Writable="{Binding Group.ItemReferences[0].Writable, Mode=OneWay}"
+                                            Value="{Binding Value}" />-->
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </Grid>
+
+
+                </my:RoomControlBox.BodyContent>
+            </my:RoomControlBox>
+
+
+            <my:RoomControlBox
+                Title="{multilinguality:Translate 'Temperature',
+                                                  'RoomControl'}"
+                Grid.Row="0"
+                Grid.Column="1"
+                ImageUrl="pack://application:,,,/Panacea.Modules.RoomControl;component/Images/temperature.png"
+                TitleBackground="#fe7e28">
+                <my:RoomControlBox.BodyContent>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <TextBlock
+                            FontSize="{DynamicResource FontSize-Small}"
+                            Foreground="#999999"
+                            Text="{multilinguality:Translate 'Use the slider to increase/decrease the room temperature.',
+                                                             'RoomControl'}"
+                            TextWrapping="Wrap" />
+                        <ScrollViewer
+                            Grid.Row="1"
+                            HorizontalAlignment="Center"
+                            HorizontalScrollBarVisibility="Auto"
+                            PanningMode="HorizontalOnly"
+                            VerticalScrollBarVisibility="Disabled">
+                            <ItemsControl HorizontalAlignment="Left" ItemsSource="{Binding TemperatureDevices}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <my:MinMaxButtonsControl
+                                            ButtonColor="#fe7e28"
+                                            DeviceType="{Binding Group.ItemReferences[0].RefType}"
+                                            Label="{Binding Label}"
+                                            MaxValue="{Binding Group.ItemReferences[0].ValueRange.Max}"
+                                            MeasurementUnit="{Binding Group.ItemReferences[0].MeasurementUnit}"
+                                            MinValue="{Binding Group.ItemReferences[0].ValueRange.Min}"
+                                            Step="1.0"
+                                            Tag="{Binding}"
+                                            Text="{Binding Group.Name}"
+                                            ValueChangedCommand="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:RoomControlsView}}, Path=DataContext.MinMaxValueChangedCommand}"
+                                            Value="{Binding Value}" />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </Grid>
+                </my:RoomControlBox.BodyContent>
+            </my:RoomControlBox>
+
+        </Grid>
+        <Grid Grid.Row="1">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Name="BlindsColumn" Width="{Binding BlindsColumnWidth}" />
+                <ColumnDefinition Name="GlassesColumn" Width="{Binding GlassesColumnWidth}" />
+            </Grid.ColumnDefinitions>
+
+            <my:RoomControlBox
+                Title="{multilinguality:Translate 'Blinds',
+                                                  'RoomControl'}"
+                Grid.Row="1"
+                Grid.Column="0"
+                ImageUrl="pack://application:,,,/Panacea.Modules.RoomControl;component/Images/blinds.png"
+                TitleBackground="#756f6f">
+                <my:RoomControlBox.BodyContent>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <TextBlock
+                            FontSize="{DynamicResource FontSize-Small}"
+                            Foreground="#999999"
+                            Text="{multilinguality:Translate 'Tap Up/Down buttons to control the tilt. Press and hold the Up/Down buttons to control the blinds, then press Stop to stop the action',
+                                                             'RoomControl'}"
+                            TextWrapping="Wrap" />
+                        <Grid Grid.Row="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Button
+                                Name="BlindsUpButton"
+                                MinWidth="200"
+                                behaviors:ButtonBehaviors.MouseDownCommand="{Binding BlindsUpMouseDownCommand}"
+                                behaviors:ButtonBehaviors.MouseUpCommand="{Binding BlindsUpMouseUpCommand}"
+                                Content="Up"
+                                Style="{StaticResource BoxButton}" />
+                            <Button
+                                Name="BlindsStopButton"
+                                Grid.Row="1"
+                                MinWidth="200"
+                                Command="{Binding BlindsStopCommand}"
+                                Content="Stop"
+                                Style="{StaticResource BoxButton}" />
+                            <Button
+                                Name="BlindsDownButton"
+                                Grid.Row="2"
+                                MinWidth="200"
+                                behaviors:ButtonBehaviors.MouseDownCommand="{Binding BlindsDownMouseDownCommand}"
+                                behaviors:ButtonBehaviors.MouseUpCommand="{Binding BlindsDownMouseUpCommand}"
+                                Content="Down"
+                                Style="{StaticResource BoxButton}" />
+                        </Grid>
+                    </Grid>
+                </my:RoomControlBox.BodyContent>
+            </my:RoomControlBox>
+
+
+            <my:RoomControlBox
+                Title="{multilinguality:Translate 'Chromatic Glass',
+                                                  'RoomControl'}"
+                Grid.Row="1"
+                Grid.Column="1"
+                ImageUrl="pack://application:,,,/Panacea.Modules.RoomControl;component/Images/glass.png"
+                TitleBackground="#e4528d">
+                <my:RoomControlBox.BodyContent>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <TextBlock
+                            FontSize="{DynamicResource FontSize-Small}"
+                            Foreground="#999999"
+                            Text="{multilinguality:Translate 'Use the slider to adjust the tint level. Changes may take 20-40 minutes to occur.',
+                                                             'RoomControl'}"
+                            TextWrapping="Wrap" />
+                        <ScrollViewer
+                            Grid.Row="1"
+                            HorizontalAlignment="Center"
+                            HorizontalScrollBarVisibility="Auto"
+                            PanningMode="HorizontalOnly"
+                            VerticalScrollBarVisibility="Disabled">
+                            <ItemsControl HorizontalAlignment="Left" ItemsSource="{Binding GlassDevices}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <my:MinMaxButtonsControl
+                                            ButtonColor="#e4528d"
+                                            DeviceType="{Binding Group.ItemReferences[0].RefType}"
+                                            Label="{Binding Label}"
+                                            MaxValue="{Binding Group.ItemReferences[0].ValueRange.Max}"
+                                            MeasurementUnit="{Binding Group.ItemReferences[0].MeasurementUnit}"
+                                            MinValue="{Binding Group.ItemReferences[0].ValueRange.Min}"
+                                            Step="1.0"
+                                            Tag="{Binding}"
+                                            Text="{Binding Group.Name}"
+                                            ValueChangedCommand="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:RoomControlsView}}, Path=DataContext.MinMaxValueChangedCommand}"
+                                            Value="{Binding Value}" />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </Grid>
+                </my:RoomControlBox.BodyContent>
+            </my:RoomControlBox>
+
+        </Grid>
+    </Grid>
+</UserControl>

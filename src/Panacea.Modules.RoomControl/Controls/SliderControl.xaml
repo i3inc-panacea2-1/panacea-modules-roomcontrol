@@ -1,0 +1,252 @@
+﻿<UserControl
+    x:Class="Panacea.Modules.RoomControl.Controls.SliderControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Panacea.Modules.RoomControl.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:multilinguality="clr-namespace:Panacea.Multilinguality;assembly=Panacea.Multilinguality"
+    xmlns:pcontrols="clr-namespace:Panacea.Controls;assembly=Panacea.Controls"
+    Name="Main"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <Style TargetType="{x:Type ToggleButton}">
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="Background" Value="#FAFAFB" />
+            <Setter Property="BorderBrush" Value="#EAEAEB" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Viewbox Stretch="Uniform">
+                            <Canvas
+                                Name="Layer_1"
+                                Width="40"
+                                Height="20">
+                                <Ellipse
+                                    Canvas.Left="0"
+                                    Width="20"
+                                    Height="20"
+                                    Fill="{TemplateBinding Background}"
+                                    Stroke="{TemplateBinding BorderBrush}"
+                                    StrokeThickness="0.5" />
+                                <Ellipse
+                                    Canvas.Left="15"
+                                    Width="20"
+                                    Height="20"
+                                    Fill="{TemplateBinding Background}"
+                                    Stroke="{TemplateBinding BorderBrush}"
+                                    StrokeThickness="0.5" />
+                                <Border
+                                    Name="rect416927"
+                                    Canvas.Left="10"
+                                    Width="15"
+                                    Height="20"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="0,0.5,0,0.5" />
+                                <Ellipse
+                                    x:Name="ellipse"
+                                    Canvas.Left="0"
+                                    Width="20"
+                                    Height="20"
+                                    Fill="White"
+                                    Stroke="{TemplateBinding BorderBrush}"
+                                    StrokeThickness="0.3">
+                                    <Ellipse.RenderTransform>
+                                        <TranslateTransform X="0" Y="0" />
+                                    </Ellipse.RenderTransform>
+                                    <Ellipse.Effect>
+                                        <DropShadowEffect
+                                            Direction="270"
+                                            Opacity="0.1"
+                                            ShadowDepth="0.7"
+                                            Color="#BBBBBB" />
+                                    </Ellipse.Effect>
+                                </Ellipse>
+                            </Canvas>
+                        </Viewbox>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ColorAnimation
+                                                Storyboard.TargetProperty="Background.Color"
+                                                To="#4170c5"
+                                                Duration="0:0:0.2" />
+                                            <ColorAnimation
+                                                Storyboard.TargetProperty="BorderBrush.Color"
+                                                To="#3160c0"
+                                                Duration="0:0:0.2" />
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ellipse" Storyboard.TargetProperty="(Ellipse.RenderTransform).(TranslateTransform.X)">
+                                                <SplineDoubleKeyFrame KeyTime="0" Value="0" />
+                                                <SplineDoubleKeyFrame
+                                                    KeySpline="0, 1, 0.6, 1"
+                                                    KeyTime="0:0:0.4"
+                                                    Value="15" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ColorAnimation
+                                                Storyboard.TargetProperty="Background.Color"
+                                                To="#FAFAFB"
+                                                Duration="0:0:0.2" />
+                                            <ColorAnimation
+                                                Storyboard.TargetProperty="BorderBrush.Color"
+                                                To="#EAEAEB"
+                                                Duration="0:0:0.2" />
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ellipse" Storyboard.TargetProperty="(Ellipse.RenderTransform).(TranslateTransform.X)">
+                                                <SplineDoubleKeyFrame KeyTime="0" Value="15" />
+                                                <SplineDoubleKeyFrame
+                                                    KeySpline="0, 0.5, 0.5, 1"
+                                                    KeyTime="0:0:0.3"
+                                                    Value="0" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="BoxButton" TargetType="Button">
+            <Style.Setters>
+                <Setter Property="Margin" Value="5" />
+                <Setter Property="HorizontalAlignment" Value="Center" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Grid>
+                                <Rectangle Name="Rect" Fill="#e1e1e1" />
+                                <TextBlock
+                                    Margin="15,10"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    FontSize="{DynamicResource FontSize-Small}"
+                                    Foreground="Black"
+                                    Opacity="0.7"
+                                    Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Content}" />
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="Rect" Property="Fill" Value="Orange" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style.Setters>
+        </Style>
+        <BooleanToVisibilityConverter x:Key="Converter" />
+    </UserControl.Resources>
+    <Grid>
+        <Grid Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <TextBlock
+                Margin="5"
+                HorizontalAlignment="Center"
+                FontSize="{DynamicResource FontSize-X-Large}"
+                Text="{Binding ElementName=Main, Path=Text}"
+                TextAlignment="Center" />
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Viewbox MaxWidth="200">
+                    <StackPanel
+                        Margin="15"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal"
+                        Visibility="{Binding ElementName=Main, Path=ShowLabel}">
+                        <TextBlock
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Bottom"
+                            FontSize="{DynamicResource FontSize-Xxx-Large}"
+                            Text="{Binding ElementName=Main, Path=Label}" />
+                        <TextBlock
+                            Margin="0,2"
+                            VerticalAlignment="Bottom"
+                            FontSize="{DynamicResource FontSize-X-Large}"
+                            Text="{Binding ElementName=Main, Path=MeasurementUnit}" />
+                    </StackPanel>
+                </Viewbox>
+                <pcontrols:ExtendedSlider
+                    Name="Slider"
+                    Grid.Column="1"
+                    Margin="5"
+                    HorizontalAlignment="Center"
+                    Add="{Binding ElementName=Main, Path=Add}"
+                    Background="{Binding ElementName=Main, Path=SliderBackground}"
+                    Foreground="#222"
+                    IsSnapToTickEnabled="True"
+                    Maximum="{Binding ElementName=Main, Path=Maximum}"
+                    Minimum="{Binding ElementName=Main, Path=Minimum}"
+                    Orientation="Vertical"
+                    SliderWidth="35"
+                    Thumb.DragCompleted="BedStandSlider_OnDragCompleted"
+                    TickFrequency="1"
+                    TickPlacement="Both"
+                    Visibility="{Binding ElementName=Main, Path=IsSlider}"
+                    Value="{Binding ElementName=Main, Path=Value}" />
+
+
+                <StackPanel
+                    Grid.Column="2"
+                    Margin="5"
+                    VerticalAlignment="Center"
+                    Visibility="{Binding ElementName=Main, Path=IsSlider}">
+                    <Button
+                        Name="OnButton"
+                        Margin="10"
+                        Click="OnButton_OnClick"
+                        Content="{multilinguality:Translate 'Max',
+                                                            'RoomControl'}"
+                        Style="{StaticResource BoxButton}" />
+                    <Button
+                        Name="OffButton"
+                        Margin="10"
+                        Click="OffButton_OnClick"
+                        Content="{multilinguality:Translate 'Min',
+                                                            'RoomControl'}"
+                        Style="{StaticResource BoxButton}" />
+                </StackPanel>
+                <StackPanel
+                    Grid.Column="3"
+                    Margin="5"
+                    VerticalAlignment="Center"
+                    Visibility="{Binding ElementName=Main, Path=IsOnOff}">
+                    <Button
+                        Name="OnButton2"
+                        Margin="10"
+                        Click="OnButton2_OnClick"
+                        Content="{multilinguality:Translate 'On',
+                                                            'RoomControl'}"
+                        Style="{StaticResource BoxButton}" />
+                    <Button
+                        Name="OffButton2"
+                        Margin="10"
+                        Click="OffButton2_OnClick"
+                        Content="{multilinguality:Translate 'Off',
+                                                            'RoomControl'}"
+                        Style="{StaticResource BoxButton}" />
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>
