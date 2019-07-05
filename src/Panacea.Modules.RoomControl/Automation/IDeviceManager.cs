@@ -15,7 +15,7 @@ namespace Panacea.Modules.RoomControl.Automation
     }
     internal class VoidManager : IDeviceManager
     {
-        Dictionary<string, string> properties;
+        Dictionary<string, Dictionary<string,string>> properties;
         private List<Device> devices;
 
         public VoidManager(List<Device> devices)
@@ -29,28 +29,54 @@ namespace Panacea.Modules.RoomControl.Automation
 
         public async Task<bool> InitAsync()
         {
-            properties = new Dictionary<string, string>();
-            properties.Add("Present Value", "0");
-            await Task.Delay(1500);
+            properties = new Dictionary<string, Dictionary<string,string>>();
+            await Task.Delay(100);
             return true;
         }
         public async Task<string> ReadPropertyAsync(string device, string prop)
         {
-            await Task.Delay(1500);
-            string val;
-            if (properties.TryGetValue(prop, out val)){
-                return val;
+            await Task.Delay(100);
+            Dictionary<string, string> props;
+            if (properties.TryGetValue(device, out props)){
+                string val;
+                if (props.TryGetValue(prop, out val))
+                {
+                    return val;
+                }
+                else
+                {
+                    return "11";
+                }
             }
             else
             {
-                return "1";
+                return "22";
             }
             //throw new NotImplementedException("ReadPropertyAsync device" + device + " prop: " + prop);
         }
-        public async Task<int> WritePropertyAsync(string device, string prop, string val)
+        public async Task<int> WritePropertyAsync(string device, string prop, string value)
         {
-            await Task.Delay(1500);
-            properties[prop] = val;
+            await Task.Delay(100);
+            Dictionary<string, string> props;
+            if (properties.TryGetValue(device, out props))
+            {
+                string val;
+                if (props.TryGetValue(prop, out val))
+                {
+                    props[prop] = value;
+                    return 1;
+                }
+                else
+                {
+                    props[prop] = value;
+                    return 1;
+                }
+            }
+            else
+            {
+                properties[device] = new Dictionary<string, string>();
+                properties[device][prop] = value;
+            }
             return 1;
             //throw new NotImplementedException("WritePropertyAsync" + device + " prop: " + prop + " val: " + val);
         }

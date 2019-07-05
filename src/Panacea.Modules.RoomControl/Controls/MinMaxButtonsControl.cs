@@ -1,10 +1,6 @@
 ﻿using Panacea.Controls;
 using Panacea.Modules.RoomControl.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -169,28 +165,24 @@ namespace Panacea.Modules.RoomControl.Controls
 
         // Using a DependencyProperty as the backing store for DeviceType.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty DeviceTypeProperty =
-            DependencyProperty.Register("DeviceType", typeof(RefType), typeof(MinMaxButtonsControl), new PropertyMetadata(default(RefType), PropertyChangedCallback));
+            DependencyProperty.Register("DeviceType", typeof(RefType), typeof(MinMaxButtonsControl), new PropertyMetadata(RefType.OnOff, PropertyChangedCallback));
 
 
         private static void PropertyChangedCallback(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs dependencyPropertyChangedEventArgs)
         {
             var sc = (MinMaxButtonsControl)dependencyObject;
 
-            if (sc.DeviceType == RefType.OnOff)
+            if (sc.DeviceType == RefType.Range)
             {
+                sc.IsSlider = Visibility.Visible;
+                sc.ShowValue = Visibility.Visible;
                 sc.ShowLabel = Visibility.Collapsed;
             }
             else
             {
-                sc.ShowLabel = Visibility.Visible;
-            }
-            if (sc.DeviceType == RefType.Range)
-            {
-                sc.IsSlider = Visibility.Visible;
-            }
-            else
-            {
                 sc.IsSlider = Visibility.Collapsed;
+                sc.ShowValue = Visibility.Collapsed;
+                sc.ShowLabel = Visibility.Visible;
             }
         }
 
@@ -260,6 +252,15 @@ namespace Panacea.Modules.RoomControl.Controls
         public static readonly DependencyProperty ShowLabelProperty =
             DependencyProperty.Register("ShowLabel", typeof(Visibility), typeof(MinMaxButtonsControl), new PropertyMetadata(Visibility.Collapsed));
 
+        public Visibility ShowValue
+        {
+            get { return (Visibility)GetValue(ShowValueProperty); }
+            set { SetValue(ShowValueProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for ShowLabel.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty ShowValueProperty =
+            DependencyProperty.Register("ShowValue", typeof(Visibility), typeof(MinMaxButtonsControl), new PropertyMetadata(Visibility.Collapsed));
 
         public event EventHandler<int> ValueChanged;
 

@@ -132,17 +132,18 @@
                                         Margin="15"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
-                                        Orientation="Horizontal"
-                                        Visibility="{TemplateBinding ShowLabel}">
+                                        Orientation="Horizontal">
                                         <TextBlock
                                             HorizontalAlignment="Left"
                                             VerticalAlignment="Bottom"
                                             FontSize="{DynamicResource FontSize-Xxx-Large}"
-                                            Text="{TemplateBinding Label}" />
+                                            Text="{TemplateBinding Label}"
+                                            Visibility="{TemplateBinding ShowLabel}" />
                                         <TextBlock
                                             VerticalAlignment="Bottom"
                                             FontSize="{DynamicResource FontSize-X-Large}"
-                                            Text="{Binding RelativeSource={RelativeSource AncestorType=roomControls:MinMaxButtonsControl}, Path=Value, StringFormat=#0.0}" />
+                                            Text="{Binding RelativeSource={RelativeSource AncestorType=roomControls:MinMaxButtonsControl}, Path=Value, StringFormat=#0.0}"
+                                            Visibility="{TemplateBinding ShowValue}" />
                                         <TextBlock
                                             Margin="0,2"
                                             VerticalAlignment="Bottom"

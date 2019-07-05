@@ -93,14 +93,12 @@ namespace Panacea.Modules.RoomControl.ViewModels
                                 _core.WebSocket.PopularNotify("RoomControl", "DeviceGroup", dev.Group.Id);
                                 _core.Logger.Debug("RoomControl", "Writing to device: " + value + " " + dev.Group.ItemReferences[0].Reference);
                                 await _temperatureManager.WritePropertyAsync(dev.Group.ItemReferences[0].Reference, dev.Group.ItemReferences[0].Property, value);
-                                await Task.Delay(5000);
                             }
                             catch
                             {
                                 ui.Toast(
                                     new Translator("RoomControl").Translate("Failed to reach device. Please try again later"));
                                 //((SliderControl)sender).Value = dev.Value;
-
                             }
                             try
                             {
@@ -131,7 +129,6 @@ namespace Panacea.Modules.RoomControl.ViewModels
                             _core.WebSocket.PopularNotify("RoomControl", "DeviceGroup", dev.Group.Id);
                             _core.Logger.Debug("RoomControl", "Writing to device: " + value + " " + dev.Group.ItemReferences[0].Reference);
                             await _temperatureManager.WritePropertyAsync(dev.Group.ItemReferences[0].Reference, dev.Group.ItemReferences[0].Property, value.ToString());
-                            await Task.Delay(1);
                         }
                         catch
                         {
@@ -239,7 +236,7 @@ namespace Panacea.Modules.RoomControl.ViewModels
         {
             if(_core.TryGetUiManager(out IUiManager ui))
             {
-                if (ui.CurrentPage == this) ui.GoHome();
+                //if (ui.CurrentPage == this) ui.GoHome();
             }
             else
             {
@@ -280,14 +277,14 @@ namespace Panacea.Modules.RoomControl.ViewModels
             {
                 await ui.DoWhileBusy(async () =>
                 {
-                    await Task.Run(() =>
+                    await Task.Run( async () =>
                     {
                         try
                         {
                             var completed = _temperatureManager.InitAsync().Wait(7000);
                             if (completed)
                             {
-                                //RefreshDevices();
+                                await RefreshDevices();
                                 _inited = true;
                                 _core.Logger.Debug("RoomControl", "Inited");
                             }
