@@ -1,5 +1,6 @@
 ﻿using Panacea.Controls;
 using Panacea.Core;
+using Panacea.Modularity.Relays;
 using Panacea.Modularity.UiManager;
 using Panacea.Modules.RoomControl.Automation;
 using Panacea.Modules.RoomControl.Controls;
@@ -42,7 +43,7 @@ namespace Panacea.Modules.RoomControl.ViewModels
         private List<Device> _devices;
         private DeviceServer _deviceServer;
         private bool _inited;
-        private bool RelayManagerIsFtdiPresent = true;
+        private bool RelayManagerIsFtdiPresent = false;
         public RoomControlsViewModel(PanaceaServices core, List<Device> devices, DeviceServer deviceServer)
         {
             _core = core;
@@ -60,7 +61,7 @@ namespace Panacea.Modules.RoomControl.ViewModels
             if (devices.Any(d => d.Group.Type == DeviceType.Glass))
                 GlassDevices = devices.Where(d => d.Group.Type == DeviceType.Glass).ToList();
 
-            setColumnWidths();
+
             setupTimers();
             setupCommands();
 
@@ -222,6 +223,11 @@ namespace Panacea.Modules.RoomControl.ViewModels
         {
             if (!_inited) await InitializeManager();
             if (!_inited) return;
+            if (_core.GetRelayManager(out IRelayManager relay))
+            {
+                RelayManagerIsFtdiPresent = relay.BlindsAttached;
+            }
+            setColumnWidths();
             _timer.Start();
             await RefreshDevices();
             base.Activate();
@@ -234,7 +240,7 @@ namespace Panacea.Modules.RoomControl.ViewModels
         }
         private void _idleTimer_Tick(object sender, EventArgs e)
         {
-            if(_core.TryGetUiManager(out IUiManager ui))
+            if (_core.TryGetUiManager(out IUiManager ui))
             {
                 //if (ui.CurrentPage == this) ui.GoHome();
             }
@@ -263,7 +269,7 @@ namespace Panacea.Modules.RoomControl.ViewModels
             _timer.Stop();
             _timer.Interval = TimeSpan.FromSeconds(new Random().Next(55, 90));
             await RefreshDevices();
-            if(_core.TryGetUiManager(out IUiManager ui))
+            if (_core.TryGetUiManager(out IUiManager ui))
             {
                 if (ui.CurrentPage != this) return;
             }
@@ -277,23 +283,23 @@ namespace Panacea.Modules.RoomControl.ViewModels
             {
                 await ui.DoWhileBusy(async () =>
                 {
-                    await Task.Run( async () =>
-                    {
-                        try
-                        {
-                            var completed = _temperatureManager.InitAsync().Wait(7000);
-                            if (completed)
-                            {
-                                await RefreshDevices();
-                                _inited = true;
-                                _core.Logger.Debug("RoomControl", "Inited");
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            _core.Logger.Debug("RoomControl", ex.Message);
-                        }
-                    });
+                    await Task.Run(async () =>
+                   {
+                       try
+                       {
+                           var completed = _temperatureManager.InitAsync().Wait(7000);
+                           if (completed)
+                           {
+                               await RefreshDevices();
+                               _inited = true;
+                               _core.Logger.Debug("RoomControl", "Inited");
+                           }
+                       }
+                       catch (Exception ex)
+                       {
+                           _core.Logger.Debug("RoomControl", ex.Message);
+                       }
+                   });
                 });
                 _initializingManager = false;
             }
@@ -403,93 +409,87 @@ namespace Panacea.Modules.RoomControl.ViewModels
         }
 
         public RelayCommand StringValueChangedCommand { get; private set; }
-        public ICommand MinMaxValueChangedCommand{ get; set; }
+        public ICommand MinMaxValueChangedCommand { get; set; }
         public ICommand BlindsUpMouseDownCommand { get; set; }
         public ICommand BlindsUpMouseUpCommand { get; set; }
         public ICommand BlindsDownMouseDownCommand { get; set; }
         public ICommand BlindsDownMouseUpCommand { get; set; }
         public ICommand BlindsStopCommand { get; set; }
+
         private async void BlindsUpButton_OnMouseDown()
         {
-            if (_upMouseDown) return;
-            _upMouseDown = true;
-            _upMouseUp = false;
             _idleTimer.Stop();
             _idleTimer.Start();
             _core.Logger.Debug(this, "n: 4, true");
-            //_core.GetRelayManager().FtdiSetRelayStatus(4, true);
-            await Task.Delay(600);
-            if (_upMouseUp) {
-                _core.Logger.Debug(this, "n: 4, false");
+            if (_core.GetRelayManager(out IRelayManager relay))
+            {
+                await relay.SetBlindsUpAsync(true);
             }
+
             //_core.GetRelayManager().FtdiSetRelayStatus(4, false);
-            _upMouseDown = _downMouseUp = false;
+
         }
 
-        private void BlindsUpButton_OnMouseUp()
+        private async void BlindsUpButton_OnMouseUp()
         {
-            _upMouseUp = true;
             last_DirectionButton = BLINDS_UP;
             _idleTimer.Stop();
             _idleTimer.Start();
-            if (!_upMouseDown)
+            if (_core.GetRelayManager(out IRelayManager relay))
             {
-                _core.Logger.Debug(this, "n: 4, false");
-                //_core.GetRelayManager().FtdiSetRelayStatus(4, false);
+                await relay.SetBlindsUpAsync(false);
             }
+
         }
 
-        private bool _downMouseDown, _downMouseUp, _upMouseDown, _upMouseUp;
+
         private async void BlindsDownButton_OnMouseDown()
         {
-            if (_downMouseDown) return;
-            _downMouseDown = true;
-            _downMouseUp = false;
             _idleTimer.Stop();
             _idleTimer.Start();
-            //Host.RelayManager.FtdiSetRelayStatus(3, true);
-            _core.Logger.Debug(this, "n: 3, true");
-            await Task.Delay(600);
-            if (_downMouseUp)
+            if (_core.GetRelayManager(out IRelayManager relay))
             {
-                _core.Logger.Debug(this, "n: 3, false");
-                //_core.GetRelayManager().FtdiSetRelayStatus(3, false);
+                await relay.SetBlindsDownAsync(true);
             }
-            _downMouseDown = _downMouseUp = false;
         }
 
         private string last_DirectionButton;
         const string BLINDS_UP = "BlindsUpButton";
         const string BLINDS_DOWN = "BlindsDownButton";
-        private void BlindsDownButton_OnMouseUp()
+        private async void BlindsDownButton_OnMouseUp()
         {
-            _downMouseUp = true;
             last_DirectionButton = BLINDS_DOWN;
             _idleTimer.Stop();
             _idleTimer.Start();
-            if (!_downMouseDown)
+            if (_core.GetRelayManager(out IRelayManager relay))
             {
-                _core.Logger.Debug(this, "n: 3, false");
-                //_core.GetRelayManager().FtdiSetRelayStatus(3, false);
+                await relay.SetBlindsDownAsync(false);
             }
         }
 
-        private void BlindsStopButton_OnClick()
+        private async void BlindsStopButton_OnClick()
         {
             _idleTimer.Stop();
             _idleTimer.Start();
             if (last_DirectionButton == null) return;
-
-            //Host.RelayManager.FtdiSetRelayStatus(4, false);
-            //Host.RelayManager.FtdiSetRelayStatus(3, false);
-
-            Thread.Sleep(101);
-            //Host.RelayManager.FtdiSetRelayStatus(last_DirectionButton == BLINDS_UP ? 4 : 3, true);
-
-            Thread.Sleep(101);
-            //Host.RelayManager.FtdiSetRelayStatus(4, false);
-            //Host.RelayManager.FtdiSetRelayStatus(3, false);
-            last_DirectionButton = null;
+            if (_core.GetRelayManager(out IRelayManager relay))
+            {
+                await relay.SetBlindsUpAsync(false);
+                await relay.SetBlindsDownAsync(false);
+                Thread.Sleep(101);
+                if (last_DirectionButton == BLINDS_UP)
+                {
+                    await relay.SetBlindsDownAsync(true);
+                }
+                else
+                {
+                    await relay.SetBlindsUpAsync(true);
+                }
+                Thread.Sleep(101);
+                await relay.SetBlindsUpAsync(false);
+                await relay.SetBlindsDownAsync(false);
+                last_DirectionButton = null;
+            }
         }
     }
 }
