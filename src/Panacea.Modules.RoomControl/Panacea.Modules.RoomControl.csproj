@@ -84,15 +84,9 @@
   <ItemGroup>
     <Compile Include="Automation\IDeviceManager.cs" />
     <Compile Include="Automation\TemperatureManager.cs" />
-    <Compile Include="Controls\ButtonsControl.xaml.cs">
-      <DependentUpon>ButtonsControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\MinMaxButtonsControl.cs" />
     <Compile Include="Controls\OnOffButtonsControl.cs" />
     <Compile Include="Controls\RoomControlBox.cs" />
-    <Compile Include="Controls\SliderControl.xaml.cs">
-      <DependentUpon>SliderControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Models\Device.cs" />
     <Compile Include="Models\DeviceGroup.cs" />
     <Compile Include="Models\DeviceServer.cs" />
@@ -133,14 +127,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Controls\ButtonsControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\SliderControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Themes\Generic.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
