@@ -2,6 +2,7 @@
 using Panacea.Core;
 using Panacea.Modularity.UiManager;
 using Panacea.Modules.RoomControl.Automation;
+using Panacea.Modules.RoomControl.Controls;
 using Panacea.Modules.RoomControl.Models;
 using Panacea.Modules.RoomControl.Views;
 using Panacea.Multilinguality;
@@ -113,13 +114,40 @@ namespace Panacea.Modules.RoomControl.ViewModels
                     }
                 }
             });
-            MinMaxValueChangedCommand = new RelayCommand(args =>
+            MinMaxValueChangedCommand = new RelayCommand(async args =>
             {
                 Console.WriteLine("minmax value changed");
                 var dev = args as Device;
-                if (dev != null){
-                    Console.WriteLine(args);
-
+                var value = dev.Value;
+                _idleTimer.Stop();
+                _idleTimer.Start();
+                if (_core.TryGetUiManager(out IUiManager ui))
+                {
+                    await ui.DoWhileBusy(async () =>
+                    {
+                        _timer.Stop();
+                        try
+                        {
+                            _core.WebSocket.PopularNotify("RoomControl", "DeviceGroup", dev.Group.Id);
+                            _core.Logger.Debug("RoomControl", "Writing to device: " + value + " " + dev.Group.ItemReferences[0].Reference);
+                            await _temperatureManager.WritePropertyAsync(dev.Group.ItemReferences[0].Reference, dev.Group.ItemReferences[0].Property, value.ToString());
+                            await Task.Delay(1);
+                        }
+                        catch
+                        {
+                            ui.Toast(
+                                new Translator("RoomControl").Translate("Failed to reach device. Please try again later"));
+                            //((MinMaxButtonsControl)sender).Value = dev.Value;
+                        }
+                        try
+                        {
+                            await UpdateDeviceSafe(dev);
+                        }
+                        catch
+                        {
+                        }
+                        if (ui.CurrentPage == this) _timer.Start();
+                    });
                 }
             });
             BlindsUpMouseDownCommand = new RelayCommand(args =>
