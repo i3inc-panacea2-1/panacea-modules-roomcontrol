@@ -61,7 +61,10 @@ namespace Panacea.Modules.RoomControl.ViewModels
             if (devices.Any(d => d.Group.Type == DeviceType.Glass))
                 GlassDevices = devices.Where(d => d.Group.Type == DeviceType.Glass).ToList();
 
-
+            BlindsColumnWidth = new GridLength(4, GridUnitType.Star);
+            LightsColumnWidth = new GridLength(4, GridUnitType.Star);
+            TemperatureColumnWidth = new GridLength(6, GridUnitType.Star);
+            GlassesColumnWidth = new GridLength(6, GridUnitType.Star);
             setupTimers();
             setupCommands();
 
@@ -185,11 +188,7 @@ namespace Panacea.Modules.RoomControl.ViewModels
         }
         private void setColumnWidths()
         {
-            if (RelayManagerIsFtdiPresent)
-            {
-                BlindsColumnWidth = new GridLength(4, GridUnitType.Star);
-            }
-            else
+            if (!RelayManagerIsFtdiPresent)
             {
                 BlindsColumnWidth = new GridLength(0, GridUnitType.Star);
             }
@@ -197,25 +196,13 @@ namespace Panacea.Modules.RoomControl.ViewModels
             {
                 LightsColumnWidth = new GridLength(0, GridUnitType.Star);
             }
-            else
-            {
-                LightsColumnWidth = new GridLength(4, GridUnitType.Star);
-            }
             if (TemperatureDevices?.Count == 0)
             {
                 TemperatureColumnWidth = new GridLength(0, GridUnitType.Star);
             }
-            else
-            {
-                TemperatureColumnWidth = new GridLength(6, GridUnitType.Star);
-            }
             if (GlassDevices?.Count == 0)
             {
                 GlassesColumnWidth = new GridLength(0, GridUnitType.Star);
-            }
-            else
-            {
-                GlassesColumnWidth = new GridLength(6, GridUnitType.Star);
             }
         }
 
