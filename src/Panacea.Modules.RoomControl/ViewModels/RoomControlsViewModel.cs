@@ -210,7 +210,7 @@ namespace Panacea.Modules.RoomControl.ViewModels
         {
             if (!_inited) await InitializeManager();
             if (!_inited) return;
-            if (_core.GetRelayManager(out IRelayManager relay))
+            if (_core.TryGetRelayManager(out IRelayManager relay))
             {
                 RelayManagerIsFtdiPresent = relay.BlindsAttached;
             }
@@ -408,7 +408,7 @@ namespace Panacea.Modules.RoomControl.ViewModels
             _idleTimer.Stop();
             _idleTimer.Start();
             _core.Logger.Debug(this, "n: 4, true");
-            if (_core.GetRelayManager(out IRelayManager relay))
+            if (_core.TryGetRelayManager(out IRelayManager relay))
             {
                 await relay.SetBlindsUpAsync(true);
             }
@@ -422,7 +422,7 @@ namespace Panacea.Modules.RoomControl.ViewModels
             last_DirectionButton = BLINDS_UP;
             _idleTimer.Stop();
             _idleTimer.Start();
-            if (_core.GetRelayManager(out IRelayManager relay))
+            if (_core.TryGetRelayManager(out IRelayManager relay))
             {
                 await relay.SetBlindsUpAsync(false);
             }
@@ -434,7 +434,7 @@ namespace Panacea.Modules.RoomControl.ViewModels
         {
             _idleTimer.Stop();
             _idleTimer.Start();
-            if (_core.GetRelayManager(out IRelayManager relay))
+            if (_core.TryGetRelayManager(out IRelayManager relay))
             {
                 await relay.SetBlindsDownAsync(true);
             }
@@ -448,7 +448,7 @@ namespace Panacea.Modules.RoomControl.ViewModels
             last_DirectionButton = BLINDS_DOWN;
             _idleTimer.Stop();
             _idleTimer.Start();
-            if (_core.GetRelayManager(out IRelayManager relay))
+            if (_core.TryGetRelayManager(out IRelayManager relay))
             {
                 await relay.SetBlindsDownAsync(false);
             }
@@ -459,7 +459,7 @@ namespace Panacea.Modules.RoomControl.ViewModels
             _idleTimer.Stop();
             _idleTimer.Start();
             if (last_DirectionButton == null) return;
-            if (_core.GetRelayManager(out IRelayManager relay))
+            if (_core.TryGetRelayManager(out IRelayManager relay))
             {
                 await relay.SetBlindsUpAsync(false);
                 await relay.SetBlindsDownAsync(false);
